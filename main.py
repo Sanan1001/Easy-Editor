@@ -22,6 +22,9 @@ btn_right = QPushButton('Право')
 btn_flip = QPushButton('Зеркало')
 btn_sharp = QPushButton('Резкость')
 btn_bw = QPushButton('Ч/б')
+btn_blur = QPushButton('Блюр')
+btn_con = QPushButton('Контур')
+btn_det = QPushButton('Детали')
 
 row = QHBoxLayout()
 col1 = QVBoxLayout()
@@ -35,6 +38,9 @@ row_tools.addWidget(btn_right)
 row_tools.addWidget(btn_flip)
 row_tools.addWidget(btn_sharp)
 row_tools.addWidget(btn_bw)
+row_tools.addWidget(btn_blur)
+row_tools.addWidget(btn_con)
+row_tools.addWidget(btn_det)
 col2.addLayout(row_tools)
 
 row.addLayout(col1, 20)
@@ -85,9 +91,14 @@ class ImageProcessor():
         fullname = os.path.join(workdir, filename)
         self.image = Image.open(fullname)
 
-
     def  do_bw (self):
         self.image = self.image.convert('L')    
+        self.saveImage()
+        image_path = os.path.join(workdir, self.save_dir, self.filename) 
+        self.showImage(image_path) 
+    
+    def  do_det(self):
+        self.image = self.image.filter(DETAIL)   
         self.saveImage()
         image_path = os.path.join(workdir, self.save_dir, self.filename) 
         self.showImage(image_path) 
@@ -116,6 +127,18 @@ class ImageProcessor():
         image_path = os.path.join(workdir, self.save_dir, self.filename)
         self.showImage(image_path)    
 
+    def do_blur(self):
+        self.image = self.image.filter(BLUR)
+        self.saveImage()
+        image_path = os.path.join(workdir, self.save_dir, self.filename)
+        self.showImage(image_path) 
+
+    def do_contour(self):
+        self.image = self.image.filter(CONTOUR)
+        self.saveImage()
+        image_path = os.path.join(workdir, self.save_dir, self.filename)
+        self.showImage(image_path) 
+
     def showImage(self, path):
         lb_image.hide()
         pixmapimage = QPixmap(path)
@@ -123,6 +146,7 @@ class ImageProcessor():
         pixmapimage = pixmapimage.scaled(w, h, Qt.KeepAspectRatio)
         lb_image.setPixmap(pixmapimage)
         lb_image.show()
+
  
 workimage = ImageProcessor()
 
@@ -140,6 +164,9 @@ btn_left.clicked.connect(workimage.do_left)
 btn_right.clicked.connect(workimage.do_right)
 btn_sharp.clicked.connect(workimage.do_sharpen)
 btn_flip.clicked.connect(workimage.do_flip)
+btn_blur.clicked.connect(workimage.do_blur)
+btn_con.clicked.connect(workimage.do_contour)
+btn_det.clicked.connect(workimage.do_det)
 lw_files.currentRowChanged.connect(showChosenImage)
 
 app.exec()
